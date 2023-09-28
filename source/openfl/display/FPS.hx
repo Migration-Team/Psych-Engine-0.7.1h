@@ -101,7 +101,8 @@ class FPS extends TextField
 			text += "\nstage3DDC: " + Context3DStats.contextDrawCalls(DrawCallContext.STAGE3D);
 			#end
 
-			text += "\n";
+			var dateNow:String = Date.now().toString();
+			text += "\nTime: " + dateNow + "-Beijing Time";
 		}
 
 		cacheCount = currentCount;
