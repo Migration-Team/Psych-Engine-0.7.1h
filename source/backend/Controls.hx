@@ -9,6 +9,7 @@ import flixel.input.actions.FlxAction;
 import flixel.input.actions.FlxActionInput;
 import flixel.input.actions.FlxActionInputDigital;
 import flixel.input.actions.FlxActionManager;
+import flixel.input.FlxInput.FlxInputState;
 
 #if android
 import android.AndroidControls.AndroidControls;
