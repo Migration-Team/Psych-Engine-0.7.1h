@@ -202,595 +202,134 @@ class Controls
 	}
 	
 	#if android
-	
-	private function checkAndroidControl_justPressed(key:String):Bool
+	public var trackedInputsUI:Array<FlxActionInput> = [];
+	public var trackedInputsNOTES:Array<FlxActionInput> = [];
+
+	public function addButtonNOTES(action:FlxActionDigital, button:FlxButton, state:FlxInputState):Void
 	{
+		if (button == null)
+			return;
+
+		var input:FlxActionInputDigitalIFlxInput = new FlxActionInputDigitalIFlxInput(button, state);
+		trackedInputsNOTES.push(input);
+		action.add(input);
+	}
+
+	public function addButtonUI(action:FlxActionDigital, button:FlxButton, state:FlxInputState):Void
+	{
+		if (button == null)
+			return;
+
+		var input:FlxActionInputDigitalIFlxInput = new FlxActionInputDigitalIFlxInput(button, state);
+		trackedInputsUI.push(input);
+		action.add(input);
+	}
+
+	public function setHitBox(Hitbox:FlxHitbox):Void
+	{
+		if (Hitbox == null)
+			return;
+
+		inline forEachBound(Control.NOTE_LEFT, (action, state) -> addButtonNOTES(action, Hitbox.hints[0], state));
+		inline forEachBound(Control.NOTE_DOWN, (action, state) -> addButtonNOTES(action, Hitbox.hints[1], state));
+		inline forEachBound(Control.NOTE_UP, (action, state) -> addButtonNOTES(action, Hitbox.hints[2], state));
+		inline forEachBound(Control.NOTE_RIGHT, (action, state) -> addButtonNOTES(action, Hitbox.hints[3], state));
+	}
+
+	public function setVirtualPadUI(VirtualPad:FlxVirtualPad, DPad:FlxDPadMode, Action:FlxActionMode):Void
+	{
+		if (VirtualPad == null)
+			return;
+
+		switch (DPad)
+		{
+			case UP_DOWN:
+				inline forEachBound(Control.UI_UP, (action, state) -> addButtonUI(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.UI_DOWN, (action, state) -> addButtonUI(action, VirtualPad.buttonDown, state));
+			case LEFT_RIGHT:
+				inline forEachBound(Control.UI_LEFT, (action, state) -> addButtonUI(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.UI_RIGHT, (action, state) -> addButtonUI(action, VirtualPad.buttonRight, state));
+			case UP_LEFT_RIGHT:
+				inline forEachBound(Control.UI_UP, (action, state) -> addButtonUI(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.UI_LEFT, (action, state) -> addButtonUI(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.UI_RIGHT, (action, state) -> addButtonUI(action, VirtualPad.buttonRight, state));
+			case LEFT_FULL | RIGHT_FULL:
+				inline forEachBound(Control.UI_UP, (action, state) -> addButtonUI(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.UI_DOWN, (action, state) -> addButtonUI(action, VirtualPad.buttonDown, state));
+				inline forEachBound(Control.UI_LEFT, (action, state) -> addButtonUI(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.UI_RIGHT, (action, state) -> addButtonUI(action, VirtualPad.buttonRight, state));
+			case BLANK: // do nothing
+		}
+
+		switch (Action)
+		{
+			case A:
+				inline forEachBound(Control.ACCEPT, (action, state) -> addButtonUI(action, VirtualPad.buttonA, state));
+			case B:
+				inline forEachBound(Control.BACK, (action, state) -> addButtonUI(action, VirtualPad.buttonB, state));
+			case A_B | A_B_C | A_B_X_Y | A_B_C_X_Y | A_B_C_X_Y_Z | A_B_C_D_V_X_Y_Z:
+				inline forEachBound(Control.ACCEPT, (action, state) -> addButtonUI(action, VirtualPad.buttonA, state));
+				inline forEachBound(Control.BACK, (action, state) -> addButtonUI(action, VirtualPad.buttonB, state));
+			case BLANK: // do nothing
+		}
+	}
+
+	public function setVirtualPadNOTES(VirtualPad:FlxVirtualPad, DPad:FlxDPadMode, Action:FlxActionMode):Void
+	{
+		if (VirtualPad == null)
+			return;
+
+		switch (DPad)
+		{
+			case UP_DOWN:
+				inline forEachBound(Control.NOTE_UP, (action, state) -> addButtonNOTES(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.NOTE_DOWN, (action, state) -> addButtonNOTES(action, VirtualPad.buttonDown, state));
+			case LEFT_RIGHT:
+				inline forEachBound(Control.NOTE_LEFT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.NOTE_RIGHT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonRight, state));
+			case UP_LEFT_RIGHT:
+				inline forEachBound(Control.NOTE_UP, (action, state) -> addButtonNOTES(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.NOTE_LEFT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.NOTE_RIGHT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonRight, state));
+			case LEFT_FULL | RIGHT_FULL:
+				inline forEachBound(Control.NOTE_UP, (action, state) -> addButtonNOTES(action, VirtualPad.buttonUp, state));
+				inline forEachBound(Control.NOTE_DOWN, (action, state) -> addButtonNOTES(action, VirtualPad.buttonDown, state));
+				inline forEachBound(Control.NOTE_LEFT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonLeft, state));
+				inline forEachBound(Control.NOTE_RIGHT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonRight, state));
+			case BLANK: // do nothing
+		}
+
+		switch (Action)
+		{
+			case A:
+				inline forEachBound(Control.ACCEPT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonA, state));
+			case B:
+				inline forEachBound(Control.BACK, (action, state) -> addButtonNOTES(action, VirtualPad.buttonB, state));
+			case A_B | A_B_C | A_B_X_Y | A_B_C_X_Y | A_B_C_X_Y_Z | A_B_C_D_V_X_Y_Z:
+				inline forEachBound(Control.ACCEPT, (action, state) -> addButtonNOTES(action, VirtualPad.buttonA, state));
+				inline forEachBound(Control.BACK, (action, state) -> addButtonNOTES(action, VirtualPad.buttonB, state));
+			case BLANK: // do nothing
+		}
+	}
+
+	public function removeVirtualControlsInput(Tinputs:Array<FlxActionInput>):Void
+	{
+		for (action in this.digitalActions)
+		{
+			var i = action.inputs.length;
+			while (i-- > 0)
+			{
+				var x = Tinputs.length;
+				while (x-- > 0)
+				{
+					if (Tinputs[x] == action.inputs[i])
+						action.remove(action.inputs[i]);
+				}
+			}
+		}
+	}
+	#end
 	
-	    var result:Bool = false;
-	    
-	    
-	    //------------------ui
-	    if (CheckPress){
-		    if (checkState){
-    		    if (key == 'accept'){
-    		    result = (MusicBeatState._virtualpad.buttonA.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatState._virtualpad.buttonB.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-		
-        		if (key == 'ui_up'){
-        		result = (MusicBeatState._virtualpad.buttonUp.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_down'){
-        		result = (MusicBeatState._virtualpad.buttonDown.justPressed == true);
-           		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_left'){
-        		result = (MusicBeatState._virtualpad.buttonLeft.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_right'){
-        		result = (MusicBeatState._virtualpad.buttonRight.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		        }
-		        }//checkState
-		    else{
-    		    if (key == 'accept'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonA.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonB.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-		
-    		    if (key == 'ui_up'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonUp.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_down'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonDown.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_left'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonLeft.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_right'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonRight.justPressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }						
-		    }//!checkState
-		}//CheckPress
-		
-		//------------------note
-		if (!CheckKeyboard){
-		if (CheckControl){
-    		if (MusicBeatState.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatState.androidc.newhbox.buttonUp.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatState.androidc.newhbox.buttonDown.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatState.androidc.newhbox.buttonLeft.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatState.androidc.newhbox.buttonRight.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatState.androidc.newhbox.buttonSpace.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatState.checkHitbox
-    		else{
-    		    if (MusicBeatState.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatState.androidc.vpad.buttonUp.justPressed || MusicBeatState.androidc.vpad.buttonUp2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatState.androidc.vpad.buttonDown.justPressed || MusicBeatState.androidc.vpad.buttonDown2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatState.androidc.vpad.buttonLeft.justPressed || MusicBeatState.androidc.vpad.buttonLeft2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatState.androidc.vpad.buttonRight.justPressed || MusicBeatState.androidc.vpad.buttonRight2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatState.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatState.androidc.vpad.buttonUp.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatState.androidc.vpad.buttonDown.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatState.androidc.vpad.buttonLeft.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatState.androidc.vpad.buttonRight.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatState.checkDUO
-    	    }//!MusicBeatState.checkHitbox
-	    }//CheckControl
-	    else{
-	    if (MusicBeatSubstate.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonUp.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonDown.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonLeft.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonRight.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatSubstate.androidc.newhbox.buttonSpace.justPressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatSubstate.checkHitbox
-    		else{
-    		    if (MusicBeatSubstate.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonUp.justPressed || MusicBeatSubstate.androidc.vpad.buttonUp2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonDown.justPressed || MusicBeatSubstate.androidc.vpad.buttonDown2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonLeft.justPressed || MusicBeatSubstate.androidc.vpad.buttonLeft2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonRight.justPressed || MusicBeatSubstate.androidc.vpad.buttonRight2.justPressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatSubstate.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonUp.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonDown.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonLeft.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonRight.justPressed == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatSubstate.checkDUO
-    	    }//!MusicBeatSubstate.checkHitbox
-	    }//!CheckControl
-	    }//!CheckKeyboard
-	    return false;
-    }
-    
-    
-    
-    private function checkAndroidControl_pressed(key:String):Bool
-    {
-    
-    var result:Bool = false;
-    
-        //------------------ui
-	    if (CheckPress){
-		    if (checkState){
-    		    if (key == 'accept'){
-    		    result = (MusicBeatState._virtualpad.buttonA.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatState._virtualpad.buttonB.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-		
-        		if (key == 'ui_up'){
-        		result = (MusicBeatState._virtualpad.buttonUp.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_down'){
-        		result = (MusicBeatState._virtualpad.buttonDown.pressed == true);
-           		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_left'){
-        		result = (MusicBeatState._virtualpad.buttonLeft.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_right'){
-        		result = (MusicBeatState._virtualpad.buttonRight.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		        }
-		        }//checkState
-		    else{
-    		    if (key == 'accept'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonA.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonB.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-		
-    		    if (key == 'ui_up'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonUp.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_down'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonDown.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_left'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonLeft.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_right'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonRight.pressed == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }						
-		    }//!checkState
-		}//CheckPress
-		
-		//------------------note
-		if(!CheckKeyboard){
-		if (CheckControl){
-    		if (MusicBeatState.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatState.androidc.newhbox.buttonUp.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatState.androidc.newhbox.buttonDown.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatState.androidc.newhbox.buttonLeft.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatState.androidc.newhbox.buttonRight.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatState.androidc.newhbox.buttonSpace.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatState.checkHitbox
-    		else{
-    		    if (MusicBeatState.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatState.androidc.vpad.buttonUp.pressed || MusicBeatState.androidc.vpad.buttonUp2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatState.androidc.vpad.buttonDown.pressed || MusicBeatState.androidc.vpad.buttonDown2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatState.androidc.vpad.buttonLeft.pressed || MusicBeatState.androidc.vpad.buttonLeft2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatState.androidc.vpad.buttonRight.pressed || MusicBeatState.androidc.vpad.buttonRight2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatState.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatState.androidc.vpad.buttonUp.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatState.androidc.vpad.buttonDown.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatState.androidc.vpad.buttonLeft.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatState.androidc.vpad.buttonRight.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatState.checkDUO
-    	    }//!MusicBeatState.checkHitbox
-	    }//CheckControl
-	    else{
-	    if (MusicBeatSubstate.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonUp.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonDown.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonLeft.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonRight.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatSubstate.androidc.newhbox.buttonSpace.pressed == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatSubstate.checkHitbox
-    		else{
-    		    if (MusicBeatSubstate.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonUp.pressed || MusicBeatSubstate.androidc.vpad.buttonUp2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonDown.pressed || MusicBeatSubstate.androidc.vpad.buttonDown2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonLeft.pressed || MusicBeatSubstate.androidc.vpad.buttonLeft2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonRight.pressed || MusicBeatSubstate.androidc.vpad.buttonRight2.pressed) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatSubstate.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonUp.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonDown.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonLeft.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonRight.pressed == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatSubstate.checkDUO
-    	    }//!MusicBeatSubstate.checkHitbox
-	    }//!CheckControl
-	    }//!CheckKeyboard
-        return false;
-	   // if (result) return true;
-    
-    }
-    
-    private function checkAndroidControl_justReleased(key:String):Bool
-    {
-    
-    var result:Bool = false;
-    
-        //------------------ui
-	    if (CheckPress){
-		    if (checkState){
-    		    if (key == 'accept'){
-    		    result = (MusicBeatState._virtualpad.buttonA.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatState._virtualpad.buttonB.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-		
-        		if (key == 'ui_up'){
-        		result = (MusicBeatState._virtualpad.buttonUp.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_down'){
-        		result = (MusicBeatState._virtualpad.buttonDown.justReleased == true);
-           		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_left'){
-        		result = (MusicBeatState._virtualpad.buttonLeft.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'ui_right'){
-        		result = (MusicBeatState._virtualpad.buttonRight.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		        }
-		        }//checkState
-		    else{
-    		    if (key == 'accept'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonA.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'back'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonB.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-		
-    		    if (key == 'ui_up'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonUp.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_down'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonDown.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_left'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonLeft.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'ui_right'){
-    		    result = (MusicBeatSubstate._virtualpad.buttonRight.justReleased == true);
-    		    if(result) {controllerMode = true; return true;}
-    		    }						
-		    }//!checkState
-		}//CheckPress
-		
-		//------------------note
-		if (!CheckKeyboard){
-		if (CheckControl){
-    		if (MusicBeatState.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatState.androidc.newhbox.buttonUp.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatState.androidc.newhbox.buttonDown.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatState.androidc.newhbox.buttonLeft.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatState.androidc.newhbox.buttonRight.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatState.androidc.newhbox.buttonSpace.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatState.checkHitbox
-    		else{
-    		    if (MusicBeatState.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatState.androidc.vpad.buttonUp.justReleased || MusicBeatState.androidc.vpad.buttonUp2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatState.androidc.vpad.buttonDown.justReleased || MusicBeatState.androidc.vpad.buttonDown2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatState.androidc.vpad.buttonLeft.justReleased || MusicBeatState.androidc.vpad.buttonLeft2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatState.androidc.vpad.buttonRight.justReleased || MusicBeatState.androidc.vpad.buttonRight2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatState.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatState.androidc.vpad.buttonUp.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatState.androidc.vpad.buttonDown.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatState.androidc.vpad.buttonLeft.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatState.androidc.vpad.buttonRight.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatState.checkDUO
-    	    }//!MusicBeatState.checkHitbox
-	    }//CheckControl
-	    else{
-	    if (MusicBeatSubstate.checkHitbox){
-    		    if (key == 'note_up'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonUp.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_down'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonDown.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_left'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonLeft.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-        		}
-        		if (key == 'note_right'){
-        		result = (MusicBeatSubstate.androidc.newhbox.buttonRight.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		    if (key == 'space' && ClientPrefs.data.hitboxExtend){
-    		    result = (MusicBeatSubstate.androidc.newhbox.buttonSpace.justReleased == true);
-        		if(result) {controllerMode = true; return true;}
-    		    }
-    		}//MusicBeatSubstate.checkHitbox
-    		else{
-    		    if (MusicBeatSubstate.checkDUO){
-        		    if (key == 'note_up'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonUp.justReleased || MusicBeatSubstate.androidc.vpad.buttonUp2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonDown.justReleased || MusicBeatSubstate.androidc.vpad.buttonDown2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonLeft.justReleased || MusicBeatSubstate.androidc.vpad.buttonLeft2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = ((MusicBeatSubstate.androidc.vpad.buttonRight.justReleased || MusicBeatSubstate.androidc.vpad.buttonRight2.justReleased) == true);
-            		if(result) {controllerMode = true; return true;}
-            		    }		    
-        		    }//MusicBeatSubstate.checkDUO
-    		    else{
-            		if (key == 'note_up'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonUp.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_down'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonDown.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_left'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonLeft.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-            		}
-            		if (key == 'note_right'){
-            		result = (MusicBeatSubstate.androidc.vpad.buttonRight.justReleased == true);
-            		if(result) {controllerMode = true; return true;}
-        		    }
-    		    }//!MusicBeatSubstate.checkDUO
-    	    }//!MusicBeatSubstate.checkHitbox
-	    }//!CheckControl
-	    }//!CheckKeyboard
-	    return false;
-	  //  if (result) return true;
-    
-    }
-    
-    #end
-    
 	// IGNORE THESE
 	public static var instance:Controls;
 	public function new()
